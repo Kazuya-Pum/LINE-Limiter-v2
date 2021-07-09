@@ -1,41 +1,33 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+    <v-app-bar
+      flat
+      app
+      color="blue-grey darken-2"
+      v-if="activeBar >= 1 && activeBar <= 2"
+    ></v-app-bar>
 
     <v-main>
       <router-view />
     </v-main>
+    <v-bottom-navigation app grow color="green accent-3" v-model="activeBar">
+      <v-btn to="add">
+        <span>追加</span>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+      <v-btn to="list">
+        <span>一覧</span>
+        <v-icon>mdi-format-list-bulleted</v-icon>
+      </v-btn>
+      <v-btn to="history">
+        <span>履歴</span>
+        <v-icon>mdi-history</v-icon>
+      </v-btn>
+      <v-btn to="settings">
+        <span>設定</span>
+        <v-icon>mdi-cog</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </v-app>
 </template>
 
@@ -46,7 +38,7 @@ export default Vue.extend({
   name: "App",
 
   data: () => ({
-    //
+    activeBar: null,
   }),
 });
 </script>
