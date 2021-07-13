@@ -59,7 +59,7 @@
           <v-expand-transition>
             <v-tabs-items v-model="tab" @change="open" v-show="show">
               <v-tab-item>
-                <v-card>
+                <v-card flat>
                   <v-card-text>
                     <v-dialog
                       ref="dialog"
@@ -93,7 +93,7 @@
                 </v-card>
               </v-tab-item>
               <v-tab-item>
-                <v-card>
+                <v-card flat>
                   <v-card-text>
                     <v-text-field
                       v-model="place"
@@ -108,7 +108,7 @@
                 </v-card>
               </v-tab-item>
               <v-tab-item>
-                <v-card>
+                <v-card flat>
                   <v-card-text>
                     <v-text-field
                       v-model="category"
@@ -124,7 +124,7 @@
                 </v-card>
               </v-tab-item>
               <v-tab-item>
-                <v-card>
+                <v-card flat>
                   <v-card-text>
                     <v-combobox
                       v-model="memos"
