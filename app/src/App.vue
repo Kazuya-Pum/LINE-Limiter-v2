@@ -1,29 +1,30 @@
 <template>
   <v-app>
-    <v-app-bar
-      flat
-      app
-      color="blue-grey darken-2"
-      v-if="activeBar >= 1 && activeBar <= 2"
-    ></v-app-bar>
-
     <v-main>
-      <router-view />
+      <v-container fluid class="pa-0" style="height: 100%">
+        <router-view />
+      </v-container>
     </v-main>
-    <v-bottom-navigation app grow color="green accent-3" v-model="activeBar">
-      <v-btn to="add">
+    <v-bottom-navigation app grow color="primary">
+      <v-btn to="add" style="background-color: transparent; height: inherit">
         <span>追加</span>
         <v-icon>mdi-plus</v-icon>
       </v-btn>
-      <v-btn to="list">
+      <v-btn to="list" style="background-color: transparent; height: inherit">
         <span>一覧</span>
         <v-icon>mdi-format-list-bulleted</v-icon>
       </v-btn>
-      <v-btn to="history">
+      <v-btn
+        to="history"
+        style="background-color: transparent; height: inherit"
+      >
         <span>履歴</span>
         <v-icon>mdi-history</v-icon>
       </v-btn>
-      <v-btn to="settings">
+      <v-btn
+        to="settings"
+        style="background-color: transparent; height: inherit"
+      >
         <span>設定</span>
         <v-icon>mdi-cog</v-icon>
       </v-btn>
@@ -37,8 +38,6 @@ import Vue from "vue";
 export default Vue.extend({
   name: "App",
 
-  data: () => ({
-    activeBar: null,
-  }),
+  data: () => ({}),
 });
 </script>
