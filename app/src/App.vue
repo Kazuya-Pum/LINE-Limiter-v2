@@ -1,9 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-container fluid class="pa-0" style="height: 100%">
-        <router-view />
-      </v-container>
+      <router-view />
     </v-main>
     <v-bottom-navigation app grow color="primary">
       <v-btn to="add" style="background-color: transparent; height: inherit">

@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "line-limiter",
   "version": "0.1.0",
   "private": true,
   "scripts": {
