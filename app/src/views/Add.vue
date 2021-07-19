@@ -144,6 +144,7 @@
                             close
                             @click="select"
                             @click:close="remove(item)"
+                            class="overflow-x-auto"
                           >
                             <strong>{{ item }}</strong>
                           </v-chip>

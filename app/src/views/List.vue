@@ -1,6 +1,14 @@
 <template>
   <v-container fluid class="pa-0">
-    <food-details :dialog="dialog" @close="dialog = false" />
+    <v-dialog
+      v-model="dialog"
+      fullscreen
+      scrollable
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <food-details @close="dialog = false" />
+    </v-dialog>
     <v-toolbar dark style="background-color: #46465a">
       <v-text-field
         prepend-icon="mdi-magnify"
@@ -15,40 +23,44 @@
       <v-tab>保存食</v-tab>
       <v-tab>その他</v-tab>
     </v-tabs>
-    <v-tabs-items v-model="tab">
+    <v-tabs-items
+      v-model="tab"
+      class="overflow-y-auto"
+      style="max-height: calc(100vh - 180px)"
+    >
       <v-tab-item>
-        <v-card flat class="overflow-y-auto">
-          <v-card-text class="flex-column">
+        <v-card flat>
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
-          <v-card-text class="flex-column">
+          <v-card-text>
             <v-btn @click="dialog = true">Open Dialog</v-btn>
           </v-card-text>
         </v-card>
