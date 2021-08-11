@@ -32,10 +32,32 @@
 
 <script lang="ts">
 import Vue from "vue";
+import liff from "@line/liff";
 
 export default Vue.extend({
   name: "App",
 
-  data: () => ({}),
+  data: () => ({
+    userName: "",
+  }),
+  async created() {
+    await liff.init({ liffId: process.env.VUE_APP_LIFF_ID }).catch((err) => {
+      console.log(err);
+    });
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    }
+
+    liff
+      .getProfile()
+      .then((profile) => {
+        this.userName = profile.displayName;
+        console.log(this.userName);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
 });
 </script>

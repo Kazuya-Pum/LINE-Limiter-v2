@@ -6,4 +6,7 @@ module.exports = {
       title: "LINE Limiter",
     },
   },
+  devServer: {
+    disableHostCheck: true,
+  },
 };
