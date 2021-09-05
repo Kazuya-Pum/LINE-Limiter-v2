@@ -23,7 +23,7 @@
       <v-tab>保存食</v-tab>
       <v-tab>その他</v-tab>
     </v-tabs>
-    <v-card flat class="overflow-y-scroll pa-0 text-center">
+    <v-card flat class="overflow-y-auto pa-0 text-center">
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <food-list :foods="foods" @click="dialog = $event"></food-list>

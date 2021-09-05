@@ -5,6 +5,9 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import firebase from "firebase/app";
+import "firebase/functions";
+import "firebase/firestore";
+import "firebase/auth";
 
 Vue.config.productionTip = false;
 
@@ -18,6 +21,12 @@ const firebaseConfig = {
   measurementId: "G-35R9HJ1L3Z",
 };
 firebase.initializeApp(firebaseConfig);
+
+if (process.env.NODE_ENV === "development") {
+  firebase.functions().useEmulator("localhost", 5001);
+  firebase.firestore().useEmulator("localhost", 8080);
+  firebase.auth().useEmulator("http://localhost:9099");
+}
 
 new Vue({
   router,

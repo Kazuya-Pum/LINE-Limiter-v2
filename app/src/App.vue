@@ -32,32 +32,59 @@
 
 <script lang="ts">
 import Vue from "vue";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/functions";
 import liff from "@line/liff";
+
+interface Data {
+  userName: string;
+  user: firebase.User | null;
+}
 
 export default Vue.extend({
   name: "App",
 
-  data: () => ({
-    userName: "",
-  }),
+  data(): Data {
+    return {
+      userName: "",
+      user: null,
+    };
+  },
   async created() {
     await liff.init({ liffId: process.env.VUE_APP_LIFF_ID }).catch((err) => {
       console.log(err);
     });
-
     if (!liff.isLoggedIn()) {
       liff.login();
     }
 
-    liff
-      .getProfile()
-      .then((profile) => {
-        this.userName = profile.displayName;
-        console.log(this.userName);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        this.user = user;
+      } else {
+        const accessToken = liff.getAccessToken();
+        // LINEのIDトークンをfirebase functionsに投げて，firebaseのカスタム認証用トークンを取得
+        const login = firebase.functions().httpsCallable("login");
+        const result = await login({ accessToken });
+        if (result.data.error) {
+          console.error(result.data.error);
+        } else {
+          // firebaseの認証用トークンを利用してカスタム認証
+          const res = await firebase
+            .auth()
+            .signInWithCustomToken(result.data.token);
+          this.user = res.user;
+        }
+      }
+      console.log(this.user);
+    });
   },
 });
 </script>
+
+<style>
+.firebase-emulator-warning {
+  display: none;
+}
+</style>
