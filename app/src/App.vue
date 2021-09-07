@@ -32,6 +32,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapActions } from "vuex";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
@@ -50,6 +51,9 @@ export default Vue.extend({
       userName: "",
       user: null,
     };
+  },
+  methods: {
+    ...mapActions(["bindFoods", "init"]),
   },
   async created() {
     await liff.init({ liffId: process.env.VUE_APP_LIFF_ID }).catch((err) => {
@@ -77,8 +81,12 @@ export default Vue.extend({
           this.user = res.user;
         }
       }
-      console.log(this.user);
     });
+  },
+  mounted() {
+    if (this.user) {
+      this.bindFoods(this.user.uid);
+    }
   },
 });
 </script>

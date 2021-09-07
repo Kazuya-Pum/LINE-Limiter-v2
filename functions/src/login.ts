@@ -48,6 +48,13 @@ export const login = functions.https.onCall(async (data) => {
     await verifyToken(accessToken);
     const profile = await getProfile(accessToken);
     const token = await admin.auth().createCustomToken(profile.userId);
+    await admin
+        .firestore()
+        .collection("storages")
+        .doc(profile.userId)
+        .collection("users")
+        .doc(profile.userId)
+        .set({visible: true});
     return {token};
   } catch (e) {
     console.error(JSON.stringify(e, null, "  "));

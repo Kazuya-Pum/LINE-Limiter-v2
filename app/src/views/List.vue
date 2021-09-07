@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapGetters } from "vuex";
 import FoodDetails from "../components/FoodDetails.vue";
 import FoodList from "../components/FoodList.vue";
 
@@ -59,29 +60,9 @@ export default Vue.extend({
   data: () => ({
     tab: 0,
     dialog: false,
-    foods: [
-      {
-        id: 1,
-        name: "aaaaa",
-        place: "冷蔵庫",
-        limit: 10,
-        icon: require("../assets/logo.png"),
-      },
-      {
-        id: 2,
-        name: "bbbbb",
-        place: "冷蔵庫",
-        limit: 10,
-        icon: require("../assets/logo.png"),
-      },
-      {
-        id: 3,
-        name: "cccccc",
-        place: "冷蔵庫",
-        limit: 10,
-        icon: require("../assets/logo.png"),
-      },
-    ],
   }),
+  computed: {
+    ...mapGetters(["foods"]),
+  },
 });
 </script>
