@@ -19,7 +19,7 @@
             <v-list-item-title>{{ food.name }}</v-list-item-title>
             <v-list-item-subtitle>{{ food.place }}</v-list-item-subtitle>
           </v-list-item-content>
-          <v-list-item-content class="text-right">
+          <v-list-item-content class="text-right" v-if="enabled">
             <v-list-item-title>あと{{ food.limit }}日</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -52,8 +52,10 @@ export default Vue.extend({
     foods() {
       if (this.category === "") {
         return this.$store.getters.foods(this.enabled);
+      } else if (this.category === "その他") {
+        return this.$store.getters.foodsOtherCategory(this.enabled);
       } else {
-        return this.$store.getters.foodByCategory(this.category, this.enabled);
+        return this.$store.getters.foodsByCategory(this.category, this.enabled);
       }
     },
   },

@@ -33,11 +33,13 @@ const routes: Array<RouteConfig> = [
     path: "/list",
     name: "List",
     component: () => import("../views/List.vue"),
+    props: { enabled: true },
   },
   {
     path: "/history",
     name: "History",
-    component: () => import("../views/History.vue"),
+    component: () => import("../views/List.vue"),
+    props: { enabled: false },
   },
   {
     path: "/settings",

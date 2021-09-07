@@ -17,6 +17,8 @@ interface Food {
   img: string;
 }
 
+const categorys = ["生鮮食品", "調味料", "保存食"];
+
 export default new Vuex.Store({
   state: {
     uid: "",
@@ -37,11 +39,19 @@ export default new Vuex.Store({
         const res = state.foods.filter((food) => food.id === foodID);
         return res.length > 0 ? res[0] : undefined;
       },
-    foodByCategory:
+    foodsByCategory:
       (state) =>
       (category: string, enabled = true) => {
         return state.foods.filter(
           (food) => food.category === category && food.enabled === enabled
+        );
+      },
+    foodsOtherCategory:
+      (state) =>
+      (enabled = true) => {
+        return state.foods.filter(
+          (food) =>
+            food.enabled === enabled && !categorys.includes(food.category)
         );
       },
   },

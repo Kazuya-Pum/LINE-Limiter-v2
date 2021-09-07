@@ -33,7 +33,7 @@
           </v-btn>
         </v-card-title>
         <v-list>
-          <v-list-item>
+          <v-list-item v-if="enabled">
             <v-list-item-title> 賞味期限 </v-list-item-title>
             <v-list-item-subtitle class="text-right">{{
               food.limit
@@ -94,6 +94,11 @@ export default Vue.extend({
   props: {
     foodID: {
       type: String,
+      required: true,
+    },
+    enabled: {
+      type: Boolean,
+      default: true,
     },
   },
   methods: {
