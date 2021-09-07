@@ -28,8 +28,16 @@
             {{ food.name }}
           </span>
           <v-spacer></v-spacer>
-          <v-btn icon class="align-self-baseline" @click="edit(food.id)">
+          <v-btn
+            v-if="enabled"
+            icon
+            class="align-self-baseline"
+            @click="edit(food.id)"
+          >
             <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn v-else icon class="align-self-baseline">
+            <v-icon color="red">mdi-delete</v-icon>
           </v-btn>
         </v-card-title>
         <v-list>
@@ -70,15 +78,27 @@
 
         <v-card-actions class="justify-center pa-3 mb-3">
           <v-btn
+            v-if="enabled"
             color="primary"
             rounded
             large
             min-width="8em"
             class="font-weight-bold"
-            @click="toggleFood(food.id)"
+            @click="toggle(food.id)"
+            :disabled="disabled"
           >
             <span>消費</span>
           </v-btn>
+          <v-btn
+            v-else
+            color="primary"
+            rounded
+            large
+            min-width="8em"
+            class="font-weight-bold"
+            @click="edit(food.id)"
+            ><span>編集</span></v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-card-text>
@@ -101,13 +121,22 @@ export default Vue.extend({
       default: true,
     },
   },
+  data: () => ({
+    disabled: false,
+  }),
   methods: {
-    ...mapActions(["toggleFood"]),
+    ...mapActions(["toggleFood", "deleteFood"]),
     close() {
       this.$emit("close");
     },
     edit(id: string) {
       this.$router.push({ name: "Edit", params: { foodID: id } });
+    },
+    async toggle(id: string) {
+      this.disabled = true;
+      await this.toggleFood(id);
+      this.$emit("close");
+      this.disabled = false;
     },
   },
   computed: {

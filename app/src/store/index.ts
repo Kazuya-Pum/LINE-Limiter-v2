@@ -103,7 +103,7 @@ export default new Vuex.Store({
         .doc(foodID)
         .update(food);
     }),
-    removeFood: firestoreAction(({ getters }, foodID) => {
+    deleteFood: firestoreAction(({ getters }, foodID) => {
       return firebase
         .firestore()
         .collection("storages")
