@@ -25,6 +25,11 @@ const routes: Array<RouteConfig> = [
     component: () => import("../views/Add.vue"),
   },
   {
+    path: "/add/:foodID",
+    name: "Edit",
+    component: () => import("../views/Add.vue"),
+  },
+  {
     path: "/list",
     name: "List",
     component: () => import("../views/List.vue"),

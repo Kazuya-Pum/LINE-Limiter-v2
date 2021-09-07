@@ -7,7 +7,7 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <food-details @close="dialog = false" />
+      <food-details :foodID="foodID" @close="dialog = false" />
     </v-dialog>
     <v-toolbar dark style="background-color: #46465a">
       <v-text-field
@@ -26,19 +26,19 @@
     <v-card flat class="overflow-y-auto pa-0 text-center">
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <food-list :foods="foods" @click="dialog = $event"></food-list>
+          <food-list @click="onClick"></food-list>
         </v-tab-item>
         <v-tab-item>
-          <food-list :foods="foods" @click="dialog = $event"></food-list>
+          <food-list category="生鮮食品" @click="onClick"></food-list>
         </v-tab-item>
         <v-tab-item>
-          <food-list :foods="foods" @click="dialog = $event"></food-list>
+          <food-list category="調味料" @click="onClick"></food-list>
         </v-tab-item>
         <v-tab-item>
-          <food-list :foods="foods" @click="dialog = $event"></food-list>
+          <food-list category="保存食" @click="onClick"></food-list>
         </v-tab-item>
         <v-tab-item>
-          <food-list :foods="foods" @click="dialog = $event"></food-list>
+          <food-list category="その他" @click="onClick"></food-list>
         </v-tab-item>
       </v-tabs-items>
     </v-card>
@@ -47,7 +47,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { mapGetters } from "vuex";
 import FoodDetails from "../components/FoodDetails.vue";
 import FoodList from "../components/FoodList.vue";
 
@@ -60,9 +59,13 @@ export default Vue.extend({
   data: () => ({
     tab: 0,
     dialog: false,
+    foodID: "",
   }),
-  computed: {
-    ...mapGetters(["foods"]),
+  methods: {
+    onClick(id: string) {
+      this.dialog = true;
+      this.foodID = id;
+    },
   },
 });
 </script>

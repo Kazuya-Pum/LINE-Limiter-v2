@@ -13,16 +13,22 @@
         background-repeat: no-repeat;
         background-size: 100%;
       "
-      :style="{ backgroundImage: backgroundImage }"
+      :style="{
+        backgroundImage:
+          'url(' +
+          (food.img != undefined ? food.img : require('../assets/img.png')) +
+          ')',
+      }"
       id="target"
+      ref="target"
     >
       <v-card class="rounded-t-xl" style="margin-top: 100vmin">
         <v-card-title>
           <span style="max-width: calc(100% - 36px)">
-            {{ name }}
+            {{ food.name }}
           </span>
           <v-spacer></v-spacer>
-          <v-btn icon class="align-self-baseline">
+          <v-btn icon class="align-self-baseline" @click="edit(food.id)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
         </v-card-title>
@@ -30,19 +36,19 @@
           <v-list-item>
             <v-list-item-title> 賞味期限 </v-list-item-title>
             <v-list-item-subtitle class="text-right">{{
-              limit
+              food.limit
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
             <v-list-item-title> 保存場所 </v-list-item-title>
             <v-list-item-subtitle class="text-right">{{
-              place
+              food.place
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
             <v-list-item-title> カテゴリ </v-list-item-title>
             <v-list-item-subtitle class="text-right">{{
-              category
+              food.category
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
@@ -53,7 +59,7 @@
                   outlined
                   disabled
                   style="opacity: 1"
-                  v-for="memo in memos"
+                  v-for="memo in food.memos"
                   :key="memo"
                   >{{ memo }}</v-chip
                 >
@@ -69,6 +75,7 @@
             large
             min-width="8em"
             class="font-weight-bold"
+            @click="toggleFood(food.id)"
           >
             <span>消費</span>
           </v-btn>
@@ -80,29 +87,34 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapActions } from "vuex";
 
 export default Vue.extend({
   name: "FoodDetails",
-  data: () => ({
-    backgroundImage: "url(" + require("../assets/img.png") + ")",
-    name: "aaaaa",
-    limit: "piyo",
-    place: "fuga",
-    category: "hoge",
-    memos: ["aaa", "hoge"] as string[],
-  }),
+  props: {
+    foodID: {
+      type: String,
+    },
+  },
   methods: {
+    ...mapActions(["toggleFood"]),
     close() {
       this.$emit("close");
     },
+    edit(id: string) {
+      this.$router.push({ name: "Edit", params: { foodID: id } });
+    },
   },
-  mounted: function () {
-    this.$nextTick(function () {
-      const target = this.$el.querySelector("#target");
-      if (target) {
-        target.scrollTop = target.scrollHeight;
-      }
-    });
+  computed: {
+    food() {
+      return this.$store.getters.foodByID(this.foodID);
+    },
   },
+  // mounted() {
+  //   const target = this.$el.querySelector("#target");
+  //   if (target) {
+  //     target.scrollTop = target.scrollHeight;
+  //   }
+  // },
 });
 </script>

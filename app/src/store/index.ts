@@ -12,80 +12,92 @@ interface Food {
   notifications: number[];
   place: string;
   category: string;
-  memo: string[];
+  memos: string[];
   enabled: boolean;
   img: string;
 }
 
 export default new Vuex.Store({
   state: {
+    uid: "",
     foods: [] as Food[],
   },
   getters: {
-    foods(state) {
-      return state.foods;
+    uid: (state) => {
+      return state.uid;
     },
-    foodByID(state, foodID) {
-      const res = state.foods.filter((food) => food.id === foodID);
-      return res.length > 0 ? res[0] : undefined;
+    foods:
+      (state) =>
+      (enabled = true) => {
+        return state.foods.filter((food) => food.enabled === enabled);
+      },
+    foodByID:
+      (state) =>
+      (foodID: string): Food | undefined => {
+        const res = state.foods.filter((food) => food.id === foodID);
+        return res.length > 0 ? res[0] : undefined;
+      },
+    foodByCategory:
+      (state) =>
+      (category: string, enabled = true) => {
+        return state.foods.filter(
+          (food) => food.category === category && food.enabled === enabled
+        );
+      },
+  },
+  mutations: {
+    ...vuexfireMutations,
+    setUserID(state, uid) {
+      state.uid = uid;
     },
   },
-  mutations: { ...vuexfireMutations },
   actions: {
-    init: firestoreAction((context, storageID) => {
-      return firebase
-        .firestore()
-        .collection("storages")
-        .doc(storageID)
-        .collection("foods")
-        .add({});
-    }),
-    bindFoods: firestoreAction(({ bindFirestoreRef }, storageID: string) => {
+    bindFoods: firestoreAction(({ bindFirestoreRef, getters }) => {
       // return the promise returned by `bindFirestoreRef`
       return bindFirestoreRef(
         "foods",
         firebase
           .firestore()
           .collection("storages")
-          .doc(storageID)
+          .doc(getters.uid)
           .collection("foods")
       );
     }),
-    addFood: firestoreAction((context, { storageID, food }) => {
+    addFood: firestoreAction(({ getters }, food) => {
       return firebase
         .firestore()
         .collection("storages")
-        .doc(storageID)
+        .doc(getters.uid)
         .collection("foods")
         .add(food);
     }),
-    updateFood: firestoreAction((context, { storageID, foodID, food }) => {
+    updateFood: firestoreAction(({ getters }, { foodID, food }) => {
       return firebase
         .firestore()
         .collection("storages")
-        .doc(storageID)
+        .doc(getters.uid)
         .collection("foods")
         .doc(foodID)
         .update(food);
     }),
-    toggleFood: firestoreAction(async (context, { storageID, foodID }) => {
-      const food = context.getters.foodByID(foodID);
+    toggleFood: firestoreAction(async ({ getters }, foodID) => {
+      const food = getters.foodByID(foodID);
 
       food.enabled = !food.enabled;
 
       return firebase
         .firestore()
         .collection("storages")
-        .doc(storageID)
+        .doc(getters.uid)
         .collection("foods")
         .doc(foodID)
         .update(food);
     }),
-    removeFood: firestoreAction((context, { storageID, foodID }) => {
+    removeFood: firestoreAction(({ getters }, foodID) => {
       return firebase
         .firestore()
         .collection("storages")
-        .doc(storageID)
+        .doc(getters.uid)
         .collection("foods")
         .doc(foodID)
         .delete();

@@ -29,24 +29,32 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
-
-interface Food {
-  id: number;
-  name: string;
-  place: string;
-  limit: number;
-}
+import Vue from "vue";
 
 export default Vue.extend({
   name: "FoodList",
   props: {
-    foods: [] as PropType<Food[]>,
+    category: {
+      type: String,
+      default: "",
+    },
+    enabled: {
+      type: Boolean,
+      default: true,
+    },
   },
-  data: () => ({}),
   methods: {
-    click(id: number) {
+    click(id: string) {
       this.$emit("click", id);
+    },
+  },
+  computed: {
+    foods() {
+      if (this.category === "") {
+        return this.$store.getters.foods(this.enabled);
+      } else {
+        return this.$store.getters.foodByCategory(this.category, this.enabled);
+      }
     },
   },
 });

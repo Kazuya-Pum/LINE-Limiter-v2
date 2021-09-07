@@ -4,23 +4,23 @@
       <router-view />
     </v-main>
     <v-bottom-navigation app grow color="primary">
-      <v-btn to="add" style="background-color: transparent; height: inherit">
+      <v-btn to="/add" style="background-color: transparent; height: inherit">
         <span>追加</span>
         <v-icon>mdi-plus</v-icon>
       </v-btn>
-      <v-btn to="list" style="background-color: transparent; height: inherit">
+      <v-btn to="/list" style="background-color: transparent; height: inherit">
         <span>一覧</span>
         <v-icon>mdi-format-list-bulleted</v-icon>
       </v-btn>
       <v-btn
-        to="history"
+        to="/history"
         style="background-color: transparent; height: inherit"
       >
         <span>履歴</span>
         <v-icon>mdi-history</v-icon>
       </v-btn>
       <v-btn
-        to="settings"
+        to="/settings"
         style="background-color: transparent; height: inherit"
       >
         <span>設定</span>
@@ -81,12 +81,12 @@ export default Vue.extend({
           this.user = res.user;
         }
       }
+
+      if (this.user) {
+        this.$store.commit("setUserID", this.user.uid);
+        this.bindFoods();
+      }
     });
-  },
-  mounted() {
-    if (this.user) {
-      this.bindFoods(this.user.uid);
-    }
   },
 });
 </script>
