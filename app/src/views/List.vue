@@ -102,10 +102,5 @@ export default Vue.extend({
       this.foodID = id;
     },
   },
-  watch: {
-    search(value: string) {
-      console.log(value);
-    },
-  },
 });
 </script>

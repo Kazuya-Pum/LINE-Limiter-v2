@@ -96,11 +96,6 @@ export default Vue.extend({
       return Math.floor((limit - now) / 86400000);
     },
   },
-  watch: {
-    search(value: string) {
-      console.log(value);
-    },
-  },
   computed: {
     foods(): Food[] {
       if (this.category === "") {
