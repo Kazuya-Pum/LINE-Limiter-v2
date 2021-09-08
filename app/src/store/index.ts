@@ -3,19 +3,9 @@ import Vuex from "vuex";
 import { vuexfireMutations, firestoreAction } from "vuexfire";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import Food from "@/types/food";
 
 Vue.use(Vuex);
-interface Food {
-  id?: string;
-  name: string;
-  limit: number;
-  notifications: number[];
-  place: string;
-  category: string;
-  memos: string[];
-  enabled: boolean;
-  img: string;
-}
 
 const categorys = ["生鮮食品", "調味料", "保存食"];
 
@@ -45,8 +35,12 @@ export default new Vuex.Store({
     },
     foods:
       (state) =>
-      (enabled = true) => {
-        return state.foods.filter((food) => food.enabled === enabled);
+      (enabled = true, search = "") => {
+        return state.foods.filter(
+          (food) =>
+            food.enabled === enabled &&
+            (search === "" || food.name.startsWith(search))
+        );
       },
     foodByID:
       (state) =>
@@ -56,17 +50,22 @@ export default new Vuex.Store({
       },
     foodsByCategory:
       (state) =>
-      (category: string, enabled = true) => {
+      (category: string, enabled = true, search = "") => {
         return state.foods.filter(
-          (food) => food.category === category && food.enabled === enabled
+          (food) =>
+            food.category === category &&
+            food.enabled === enabled &&
+            (search === "" || food.name.startsWith(search))
         );
       },
     foodsOtherCategory:
       (state) =>
-      (enabled = true) => {
+      (enabled = true, search = "") => {
         return state.foods.filter(
           (food) =>
-            food.enabled === enabled && !categorys.includes(food.category)
+            food.enabled === enabled &&
+            !categorys.includes(food.category) &&
+            (search === "" || food.name.startsWith(search))
         );
       },
   },

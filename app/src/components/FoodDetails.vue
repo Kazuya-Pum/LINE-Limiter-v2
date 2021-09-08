@@ -1,7 +1,18 @@
 <template>
   <v-card>
+    <v-dialog v-model="dialog">
+      <v-card>
+        <v-card-title class="text-h5 warning">警告</v-card-title>
+        <v-card-text>削除しますか？</v-card-text>
+        <v-card-actions>
+          <v-btn color="secondary" @click="dialog = false">キャンセル</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="warning" @click="execDelete()">削除</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-toolbar dark tile style="background-color: #46465a">
-      <v-btn icon dark @click="close">
+      <v-btn icon dark @click="close()">
         <v-icon>mdi-close</v-icon>
       </v-btn>
       <v-toolbar-title>詳細</v-toolbar-title>
@@ -15,9 +26,7 @@
       "
       :style="{
         backgroundImage:
-          'url(' +
-          (food.img != undefined ? food.img : require('../assets/img.png')) +
-          ')',
+          'url(' + (food.img ? food.img : require('../assets/img.png')) + ')',
       }"
       id="target"
       ref="target"
@@ -32,11 +41,11 @@
             v-if="enabled"
             icon
             class="align-self-baseline"
-            @click="edit(food.id)"
+            @click="edit()"
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn v-else icon class="align-self-baseline">
+          <v-btn v-else icon class="align-self-baseline" @click="dialog = true">
             <v-icon color="red">mdi-delete</v-icon>
           </v-btn>
         </v-card-title>
@@ -84,7 +93,7 @@
             large
             min-width="8em"
             class="font-weight-bold"
-            @click="toggle(food.id)"
+            @click="toggle()"
             :loading="loading"
             :disabled="loading"
           >
@@ -97,7 +106,7 @@
             large
             min-width="8em"
             class="font-weight-bold"
-            @click="edit(food.id)"
+            @click="edit()"
             ><span>編集</span></v-btn
           >
         </v-card-actions>
@@ -109,9 +118,9 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapActions } from "vuex";
+import Food from "@/types/food";
 
 export default Vue.extend({
-  name: "FoodDetails",
   props: {
     foodID: {
       type: String,
@@ -125,35 +134,46 @@ export default Vue.extend({
   data: () => ({
     loading: false,
     date: 0,
+    dialog: false,
   }),
   methods: {
     ...mapActions(["toggleFood", "deleteFood"]),
     close() {
-      this.$emit("close");
-    },
-    edit(id: string) {
-      this.$router.push({ name: "Edit", params: { foodID: id } });
-    },
-    async toggle(id: string) {
-      this.loading = true;
-      await this.toggleFood(id);
-      this.$emit("close");
       this.loading = false;
+      this.dialog = false;
+      this.$emit("close");
+    },
+    edit() {
+      this.$router.push({ name: "Edit", params: { foodID: this.foodID } });
+    },
+    async toggle() {
+      this.loading = true;
+      await this.toggleFood(this.foodID);
+      this.close();
+    },
+    async execDelete() {
+      this.loading = true;
+      await this.deleteFood(this.foodID);
+      this.close();
     },
   },
   computed: {
-    food() {
+    food(): Food | { [key: string]: never } {
       const food = this.$store.getters.foodByID(this.foodID);
-      food.date = new Date(food.limit).toISOString().substr(0, 10);
-
-      return food;
+      if (food) {
+        food.date = new Date(food.limit).toISOString().substr(0, 10);
+        return food;
+      } else {
+        return {};
+      }
     },
   },
-  // mounted() {
-  //   const target = this.$el.querySelector("#target");
-  //   if (target) {
-  //     target.scrollTop = target.scrollHeight;
-  //   }
-  // },
+  async mounted() {
+    await this.$nextTick();
+    const target = this.$el.querySelector("#target");
+    if (target) {
+      target.scrollTop = target.scrollHeight;
+    }
+  },
 });
 </script>

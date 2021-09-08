@@ -38,7 +38,7 @@
           <v-card class="rounded-t-xl overflow-y-auto" height="100%">
             <v-card-title>
               <v-text-field
-                v-model="food.name"
+                v-model.trim="food.name"
                 label="食品名を入力"
               ></v-text-field>
             </v-card-title>
@@ -100,7 +100,7 @@
                   <v-card flat>
                     <v-card-text>
                       <v-text-field
-                        v-model="food.place"
+                        v-model.trim="food.place"
                         label="保存場所を入力"
                       ></v-text-field>
                       <v-chip-group v-model="food.place" color="primary">
@@ -115,7 +115,7 @@
                   <v-card flat>
                     <v-card-text>
                       <v-text-field
-                        v-model="food.category"
+                        v-model.trim="food.category"
                         label="カテゴリーを入力"
                       ></v-text-field>
                       <v-chip-group v-model="food.category" color="primary">
@@ -183,13 +183,18 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapActions } from "vuex";
+import Food from "@/types/food";
 
-const init = {
+const getNow = () => {
+  return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .substr(0, 10);
+};
+
+const init: Food = {
   name: "",
   limit: 0,
-  date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-    .toISOString()
-    .substr(0, 10),
+  date: getNow(),
   notifications: [],
   place: "冷蔵庫",
   category: "",
@@ -213,6 +218,8 @@ export default Vue.extend({
     modal: false,
     show: false,
     loading: false,
+    food: { ...init },
+    tmpID: "",
   }),
   methods: {
     ...mapActions(["addFood", "updateFood"]),
@@ -225,7 +232,7 @@ export default Vue.extend({
     },
     async save() {
       this.loading = true;
-      this.food.limit = Date.parse(this.food.date);
+      this.food.limit = Date.parse(this.food.date ? this.food.date : getNow());
       if (this.foodID) {
         this.food.enabled = true;
         await this.updateFood({ foodID: this.foodID, food: this.food });
@@ -236,17 +243,22 @@ export default Vue.extend({
       this.$router.push({ name: "List" });
     },
   },
+  watch: {
+    foodOrigin(food) {
+      this.food = { ...food };
+    },
+  },
   computed: {
-    url() {
+    url(): string {
       if (this.preview == null) {
-        return;
+        return "";
       }
       return URL.createObjectURL(this.preview);
     },
-    food() {
-      if (this.foodID) {
-        const food = { ...this.$store.getters.foodByID(this.foodID) };
-        if (Object.keys(food).length == 0) {
+    foodOrigin(): Food {
+      if (this.tmpID) {
+        const food: Food = { ...this.$store.getters.foodByID(this.foodID) };
+        if (!food || Object.keys(food).length == 0) {
           return { ...init };
         }
 
@@ -257,6 +269,10 @@ export default Vue.extend({
         return { ...init };
       }
     },
+  },
+  mounted() {
+    // 初回読み込み時にcomputedを発火させる用
+    this.tmpID = this.foodID;
   },
 });
 </script>

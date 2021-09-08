@@ -16,7 +16,9 @@
             ></v-img>
           </v-list-item-avatar>
           <v-list-item-content class="text-left">
-            <v-list-item-title>{{ food.name }}</v-list-item-title>
+            <v-list-item-title style="text-transform: none">{{
+              food.name
+            }}</v-list-item-title>
             <v-list-item-subtitle>{{ food.place }}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-content class="text-right" v-if="enabled">
@@ -32,6 +34,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Food from "@/types/food";
 
 export default Vue.extend({
   name: "FoodList",
@@ -43,6 +46,10 @@ export default Vue.extend({
     enabled: {
       type: Boolean,
       default: true,
+    },
+    search: {
+      type: String,
+      default: "",
     },
   },
   methods: {
@@ -58,14 +65,26 @@ export default Vue.extend({
       return Math.floor((limit - now) / 86400000);
     },
   },
+  watch: {
+    search(value: string) {
+      console.log(value);
+    },
+  },
   computed: {
-    foods() {
+    foods(): Food[] {
       if (this.category === "") {
-        return this.$store.getters.foods(this.enabled);
+        return this.$store.getters.foods(this.enabled, this.search);
       } else if (this.category === "その他") {
-        return this.$store.getters.foodsOtherCategory(this.enabled);
+        return this.$store.getters.foodsOtherCategory(
+          this.enabled,
+          this.search
+        );
       } else {
-        return this.$store.getters.foodsByCategory(this.category, this.enabled);
+        return this.$store.getters.foodsByCategory(
+          this.category,
+          this.enabled,
+          this.search
+        );
       }
     },
   },

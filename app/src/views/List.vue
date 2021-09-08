@@ -18,6 +18,7 @@
         prepend-icon="mdi-magnify"
         single-line
         hide-details
+        v-model="search"
       ></v-text-field>
     </v-toolbar>
     <v-tabs icons-and-text grow show-arrows center-active v-model="tab">
@@ -30,12 +31,17 @@
     <v-card flat class="overflow-y-auto pa-0 text-center">
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <food-list :enabled="enabled" @click="onClick"></food-list>
+          <food-list
+            :enabled="enabled"
+            :search="search"
+            @click="onClick"
+          ></food-list>
         </v-tab-item>
         <v-tab-item>
           <food-list
             category="生鮮食品"
             :enabled="enabled"
+            :search="search"
             @click="onClick"
           ></food-list>
         </v-tab-item>
@@ -43,6 +49,7 @@
           <food-list
             category="調味料"
             :enabled="enabled"
+            :search="search"
             @click="onClick"
           ></food-list>
         </v-tab-item>
@@ -50,6 +57,7 @@
           <food-list
             category="保存食"
             :enabled="enabled"
+            :search="search"
             @click="onClick"
           ></food-list>
         </v-tab-item>
@@ -57,6 +65,7 @@
           <food-list
             category="その他"
             :enabled="enabled"
+            :search="search"
             @click="onClick"
           ></food-list>
         </v-tab-item>
@@ -85,11 +94,17 @@ export default Vue.extend({
     tab: 0,
     dialog: false,
     foodID: "",
+    search: "",
   }),
   methods: {
     onClick(id: string) {
       this.dialog = true;
       this.foodID = id;
+    },
+  },
+  watch: {
+    search(value: string) {
+      console.log(value);
     },
   },
 });
