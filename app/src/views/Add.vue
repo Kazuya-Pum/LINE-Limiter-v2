@@ -37,7 +37,10 @@
         <div class="flex-grow-1 flex-shrink-0">
           <v-card class="rounded-t-xl overflow-y-auto" height="100%">
             <v-card-title>
-              <v-text-field label="食品名を入力"></v-text-field>
+              <v-text-field
+                v-model="food.name"
+                label="食品名を入力"
+              ></v-text-field>
             </v-card-title>
             <v-tabs icons-and-text v-model="tab" grow show-arrows center-active>
               <v-tab @click="open">
@@ -65,12 +68,12 @@
                       <v-dialog
                         ref="dialog"
                         v-model="modal"
-                        :return-value.sync="date"
+                        :return-value.sync="food.date"
                         width="290px"
                       >
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
-                            v-model="date"
+                            v-model="food.date"
                             label="賞味期限"
                             prepend-icon="mdi-calendar"
                             readonly
@@ -79,8 +82,8 @@
                           ></v-text-field>
                         </template>
                         <v-date-picker
-                          v-model="date"
-                          @input="$refs.dialog.save(date)"
+                          v-model="food.date"
+                          @input="$refs.dialog.save(food.date)"
                         ></v-date-picker>
                       </v-dialog>
                     </v-card-text>
@@ -97,10 +100,10 @@
                   <v-card flat>
                     <v-card-text>
                       <v-text-field
-                        v-model="place"
+                        v-model="food.place"
                         label="保存場所を入力"
                       ></v-text-field>
-                      <v-chip-group v-model="place" color="primary">
+                      <v-chip-group v-model="food.place" color="primary">
                         <v-chip value="冷蔵庫">冷蔵庫</v-chip>
                         <v-chip value="冷凍庫">冷凍庫</v-chip>
                         <v-chip value="常温">常温</v-chip>
@@ -112,10 +115,10 @@
                   <v-card flat>
                     <v-card-text>
                       <v-text-field
-                        v-model="category"
+                        v-model="food.category"
                         label="カテゴリーを入力"
                       ></v-text-field>
-                      <v-chip-group v-model="category" color="primary">
+                      <v-chip-group v-model="food.category" color="primary">
                         <v-chip value="生鮮食品">生鮮食品</v-chip>
                         <v-chip value="調味料">調味料</v-chip>
                         <v-chip value="保存食">保存食</v-chip>
@@ -128,7 +131,7 @@
                   <v-card flat>
                     <v-card-text>
                       <v-combobox
-                        v-model="memos"
+                        v-model="food.memos"
                         chips
                         clearable
                         label="メモを入力"
@@ -164,6 +167,8 @@
                 large
                 min-width="8em"
                 class="font-weight-bold"
+                @click="save"
+                :loading="loading"
               >
                 <span>保存</span>
               </v-btn>
@@ -177,23 +182,60 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mapActions } from "vuex";
+
+const init = {
+  name: "",
+  limit: 0,
+  date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    .toISOString()
+    .substr(0, 10),
+  notifications: [],
+  place: "冷蔵庫",
+  category: "",
+  memos: [] as Array<string>,
+  enabled: true,
+  img: "",
+};
 
 export default Vue.extend({
-  name: "Add",
+  props: {
+    foodID: {
+      type: String,
+      required: false,
+    },
+  },
   data: () => ({
     preview: null,
     backgroundImage: "url(" + require("../assets/img.png") + ")",
     imgHeight: "100vmin",
     tab: null,
-    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .substr(0, 10),
     modal: false,
-    place: "冷蔵庫",
-    category: null,
-    memos: [] as string[],
     show: false,
+    loading: false,
   }),
+  methods: {
+    ...mapActions(["addFood", "updateFood"]),
+    open() {
+      this.show = true;
+    },
+    remove(item: string) {
+      this.food.memos.splice(this.food.memos.indexOf(item), 1);
+      this.food.memos = [...this.food.memos];
+    },
+    async save() {
+      this.loading = true;
+      this.food.limit = Date.parse(this.food.date);
+      if (this.foodID) {
+        this.food.enabled = true;
+        await this.updateFood({ foodID: this.foodID, food: this.food });
+      } else {
+        await this.addFood(this.food);
+      }
+      this.loading = false;
+      this.$router.push({ name: "List" });
+    },
+  },
   computed: {
     url() {
       if (this.preview == null) {
@@ -201,14 +243,19 @@ export default Vue.extend({
       }
       return URL.createObjectURL(this.preview);
     },
-  },
-  methods: {
-    open() {
-      this.show = true;
-    },
-    remove(item: string) {
-      this.memos.splice(this.memos.indexOf(item), 1);
-      this.memos = [...this.memos];
+    food() {
+      if (this.foodID) {
+        const food = { ...this.$store.getters.foodByID(this.foodID) };
+        if (Object.keys(food).length == 0) {
+          return { ...init };
+        }
+
+        food.date = new Date(food.limit).toISOString().substr(0, 10);
+
+        return food;
+      } else {
+        return { ...init };
+      }
     },
   },
 });

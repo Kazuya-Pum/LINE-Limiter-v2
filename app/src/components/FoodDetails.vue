@@ -44,7 +44,7 @@
           <v-list-item v-if="enabled">
             <v-list-item-title> 賞味期限 </v-list-item-title>
             <v-list-item-subtitle class="text-right">{{
-              food.limit
+              food.date
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-list-item>
@@ -85,7 +85,8 @@
             min-width="8em"
             class="font-weight-bold"
             @click="toggle(food.id)"
-            :disabled="disabled"
+            :loading="loading"
+            :disabled="loading"
           >
             <span>消費</span>
           </v-btn>
@@ -122,7 +123,8 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    disabled: false,
+    loading: false,
+    date: 0,
   }),
   methods: {
     ...mapActions(["toggleFood", "deleteFood"]),
@@ -133,15 +135,18 @@ export default Vue.extend({
       this.$router.push({ name: "Edit", params: { foodID: id } });
     },
     async toggle(id: string) {
-      this.disabled = true;
+      this.loading = true;
       await this.toggleFood(id);
       this.$emit("close");
-      this.disabled = false;
+      this.loading = false;
     },
   },
   computed: {
     food() {
-      return this.$store.getters.foodByID(this.foodID);
+      const food = this.$store.getters.foodByID(this.foodID);
+      food.date = new Date(food.limit).toISOString().substr(0, 10);
+
+      return food;
     },
   },
   // mounted() {

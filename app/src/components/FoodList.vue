@@ -20,7 +20,9 @@
             <v-list-item-subtitle>{{ food.place }}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-content class="text-right" v-if="enabled">
-            <v-list-item-title>あと{{ food.limit }}日</v-list-item-title>
+            <v-list-item-title
+              >あと{{ convertDate(food.limit) }}日</v-list-item-title
+            >
           </v-list-item-content>
         </v-list-item>
       </v-btn>
@@ -46,6 +48,14 @@ export default Vue.extend({
   methods: {
     click(id: string) {
       this.$emit("click", id);
+    },
+    convertDate(limit: number) {
+      const now = Date.parse(
+        new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+          .toISOString()
+          .substr(0, 10)
+      );
+      return Math.floor((limit - now) / 86400000);
     },
   },
   computed: {

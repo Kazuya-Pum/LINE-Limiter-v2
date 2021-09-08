@@ -19,6 +19,21 @@ interface Food {
 
 const categorys = ["生鮮食品", "調味料", "保存食"];
 
+const valFood = (food: Food): Food => {
+  return {
+    name: food.name ? food.name : "",
+    limit: food.limit
+      ? food.limit
+      : Date.now() - new Date().getTimezoneOffset() * 60000,
+    notifications: food.notifications ? food.notifications : [],
+    place: food.place ? food.place : "",
+    category: food.category ? food.category : "",
+    memos: food.memos ? food.memos : [],
+    enabled: !!food.enabled,
+    img: food.img ? food.img : "",
+  };
+};
+
 export default new Vuex.Store({
   state: {
     uid: "",
@@ -71,15 +86,16 @@ export default new Vuex.Store({
           .collection("storages")
           .doc(getters.uid)
           .collection("foods")
+          .orderBy("limit")
       );
     }),
-    addFood: firestoreAction(({ getters }, food) => {
+    addFood: firestoreAction(({ getters }, food: Food) => {
       return firebase
         .firestore()
         .collection("storages")
         .doc(getters.uid)
         .collection("foods")
-        .add(food);
+        .add(valFood(food));
     }),
     updateFood: firestoreAction(({ getters }, { foodID, food }) => {
       return firebase
@@ -88,7 +104,7 @@ export default new Vuex.Store({
         .doc(getters.uid)
         .collection("foods")
         .doc(foodID)
-        .update(food);
+        .update(valFood(food));
     }),
     toggleFood: firestoreAction(async ({ getters }, foodID) => {
       const food = getters.foodByID(foodID);
