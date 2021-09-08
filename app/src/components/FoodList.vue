@@ -8,6 +8,7 @@
         color="white"
         @click="click(food.id)"
         class="px-0"
+        v-if="!enabled || convertDate(food.limit) > 0"
       >
         <v-list-item>
           <v-list-item-avatar>
@@ -20,6 +21,36 @@
               food.name
             }}</v-list-item-title>
             <v-list-item-subtitle>{{ food.place }}</v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-content class="text-right" v-if="enabled">
+            <v-list-item-title
+              >あと{{ convertDate(food.limit) }}日</v-list-item-title
+            >
+          </v-list-item-content>
+        </v-list-item>
+      </v-btn>
+      <v-btn
+        x-large
+        block
+        rounded
+        color="error"
+        @click="click(food.id)"
+        class="px-0"
+        v-else
+      >
+        <v-list-item class="white--text">
+          <v-list-item-avatar>
+            <v-img
+              :src="food.img ? food.img : require('../assets/img.png')"
+            ></v-img>
+          </v-list-item-avatar>
+          <v-list-item-content class="text-left">
+            <v-list-item-title style="text-transform: none">{{
+              food.name
+            }}</v-list-item-title>
+            <v-list-item-subtitle class="white--text">{{
+              food.place
+            }}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-content class="text-right" v-if="enabled">
             <v-list-item-title
