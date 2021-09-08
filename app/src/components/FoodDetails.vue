@@ -6,7 +6,7 @@
         <v-card-actions>
           <v-btn text @click="warn = false">キャンセル</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="warning" @click="execDelete()">削除</v-btn>
+          <v-btn color="error" @click="execDelete()">削除</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -22,6 +22,7 @@
         background-position-y: top;
         background-repeat: no-repeat;
         background-size: 100%;
+        height: 100%;
       "
       :style="{
         backgroundImage:
@@ -30,7 +31,7 @@
       id="target"
       ref="target"
     >
-      <v-card class="rounded-t-xl" style="margin-top: 100vmin">
+      <v-card class="rounded-t-xl" style="margin-top: 100vmin; height: 100%">
         <v-card-title>
           <span style="max-width: calc(100% - 36px)">
             {{ food.name }}
@@ -45,7 +46,7 @@
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
           <v-btn v-else icon class="align-self-baseline" @click="warn = true">
-            <v-icon color="red">mdi-delete</v-icon>
+            <v-icon color="error">mdi-delete</v-icon>
           </v-btn>
         </v-card-title>
         <v-list>
