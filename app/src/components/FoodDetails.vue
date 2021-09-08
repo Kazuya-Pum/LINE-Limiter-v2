@@ -1,11 +1,10 @@
 <template>
   <v-card>
-    <v-dialog v-model="dialog">
+    <v-dialog v-model="warn">
       <v-card>
-        <v-card-title class="text-h5 warning">警告</v-card-title>
-        <v-card-text>削除しますか？</v-card-text>
+        <v-card-title>{{ food.name }}を削除しますか？</v-card-title>
         <v-card-actions>
-          <v-btn color="secondary" @click="dialog = false">キャンセル</v-btn>
+          <v-btn text @click="warn = false">キャンセル</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="warning" @click="execDelete()">削除</v-btn>
         </v-card-actions>
@@ -45,7 +44,7 @@
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn v-else icon class="align-self-baseline" @click="dialog = true">
+          <v-btn v-else icon class="align-self-baseline" @click="warn = true">
             <v-icon color="red">mdi-delete</v-icon>
           </v-btn>
         </v-card-title>
@@ -131,16 +130,17 @@ export default Vue.extend({
       default: true,
     },
   },
-  data: () => ({
+  data: (): { [key: string]: boolean | number | Element | null } => ({
     loading: false,
     date: 0,
-    dialog: false,
+    warn: false,
+    menu: null,
   }),
   methods: {
     ...mapActions(["toggleFood", "deleteFood"]),
     close() {
       this.loading = false;
-      this.dialog = false;
+      this.warn = false;
       this.$emit("close");
     },
     edit() {
@@ -156,6 +156,12 @@ export default Vue.extend({
       await this.deleteFood(this.foodID);
       this.close();
     },
+    async scroll() {
+      await this.$nextTick();
+      if (this.menu instanceof Element) {
+        this.menu.scrollTop = this.menu.scrollHeight;
+      }
+    },
   },
   computed: {
     food(): Food | { [key: string]: never } {
@@ -168,12 +174,14 @@ export default Vue.extend({
       }
     },
   },
+  watch: {
+    async foodID() {
+      await this.scroll();
+    },
+  },
   async mounted() {
-    await this.$nextTick();
-    const target = this.$el.querySelector("#target");
-    if (target) {
-      target.scrollTop = target.scrollHeight;
-    }
+    this.menu = this.$el.querySelector("#target");
+    await this.scroll();
   },
 });
 </script>
