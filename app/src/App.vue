@@ -37,21 +37,27 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/functions";
 import liff from "@line/liff";
+import { Context } from "@line/liff/dist/lib/store";
 
-interface Data {
-  userName: string;
-  user: firebase.User | null;
-}
+const getStorageID = (context: Context) => {
+  const type = context.type;
+  switch (type) {
+    case "group":
+      return context.groupId;
+    case "room":
+      return context.roomId;
+    default:
+      return context.userId;
+  }
+};
 
 export default Vue.extend({
   name: "App",
 
-  data(): Data {
-    return {
-      userName: "",
-      user: null,
-    };
-  },
+  data: (): { userName: string; user: firebase.User | null } => ({
+    userName: "",
+    user: null,
+  }),
   methods: {
     ...mapActions(["bindFoods", "init"]),
   },
@@ -62,6 +68,9 @@ export default Vue.extend({
     if (!liff.isLoggedIn()) {
       liff.login();
     }
+
+    const context = liff.getContext();
+    const storageID = context ? getStorageID(context) : null;
 
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
@@ -82,8 +91,8 @@ export default Vue.extend({
         }
       }
 
-      if (this.user) {
-        this.$store.commit("setUserID", this.user.uid);
+      if (this.user && storageID) {
+        this.$store.commit("setStorageID", storageID);
         this.bindFoods();
       }
     });

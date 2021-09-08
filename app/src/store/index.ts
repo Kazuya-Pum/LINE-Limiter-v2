@@ -26,12 +26,12 @@ const valFood = (food: Food): Food => {
 
 export default new Vuex.Store({
   state: {
-    uid: "",
+    storageID: "",
     foods: [] as Food[],
   },
   getters: {
-    uid: (state) => {
-      return state.uid;
+    storageID: (state) => {
+      return state.storageID;
     },
     foods:
       (state) =>
@@ -71,8 +71,8 @@ export default new Vuex.Store({
   },
   mutations: {
     ...vuexfireMutations,
-    setUserID(state, uid) {
-      state.uid = uid;
+    setStorageID(state, storageID) {
+      state.storageID = storageID;
     },
   },
   actions: {
@@ -83,7 +83,7 @@ export default new Vuex.Store({
         firebase
           .firestore()
           .collection("storages")
-          .doc(getters.uid)
+          .doc(getters.storageID)
           .collection("foods")
           .orderBy("limit")
       );
@@ -92,7 +92,7 @@ export default new Vuex.Store({
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.uid)
+        .doc(getters.storageID)
         .collection("foods")
         .add(valFood(food));
     }),
@@ -100,7 +100,7 @@ export default new Vuex.Store({
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.uid)
+        .doc(getters.storageID)
         .collection("foods")
         .doc(foodID)
         .update(valFood(food));
@@ -113,7 +113,7 @@ export default new Vuex.Store({
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.uid)
+        .doc(getters.storageID)
         .collection("foods")
         .doc(foodID)
         .update(food);
@@ -122,7 +122,7 @@ export default new Vuex.Store({
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.uid)
+        .doc(getters.storageID)
         .collection("foods")
         .doc(foodID)
         .delete();
