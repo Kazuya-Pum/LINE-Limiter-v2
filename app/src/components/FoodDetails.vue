@@ -26,7 +26,7 @@
       "
       :style="{
         backgroundImage:
-          'url(' + (food.img ? food.img : require('../assets/img.png')) + ')',
+          'url(' + (food.img || require('../assets/img.png')) + ')',
       }"
       id="target"
       ref="target"

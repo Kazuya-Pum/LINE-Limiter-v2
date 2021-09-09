@@ -12,9 +12,7 @@
       >
         <v-list-item>
           <v-list-item-avatar>
-            <v-img
-              :src="food.img ? food.img : require('../assets/img.png')"
-            ></v-img>
+            <v-img :src="food.img || require('../assets/img.png')"></v-img>
           </v-list-item-avatar>
           <v-list-item-content class="text-left">
             <v-list-item-title style="text-transform: none">{{
@@ -40,9 +38,7 @@
       >
         <v-list-item class="white--text">
           <v-list-item-avatar>
-            <v-img
-              :src="food.img ? food.img : require('../assets/img.png')"
-            ></v-img>
+            <v-img :src="food.img || require('../assets/img.png')"></v-img>
           </v-list-item-avatar>
           <v-list-item-content class="text-left">
             <v-list-item-title style="text-transform: none">{{

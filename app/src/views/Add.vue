@@ -232,7 +232,7 @@ export default Vue.extend({
     },
     async save() {
       this.loading = true;
-      this.food.limit = Date.parse(this.food.date ? this.food.date : getNow());
+      this.food.limit = Date.parse(this.food.date || getNow());
       if (this.foodID) {
         this.food.enabled = true;
         await this.updateFood({ foodID: this.foodID, food: this.food });
