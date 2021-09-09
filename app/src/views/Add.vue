@@ -116,7 +116,7 @@
                     <v-card-text>
                       <v-text-field
                         v-model.trim="food.category"
-                        label="カテゴリーを入力"
+                        label="カテゴリを入力"
                       ></v-text-field>
                       <v-chip-group v-model="food.category" color="primary">
                         <v-chip value="生鮮食品">生鮮食品</v-chip>

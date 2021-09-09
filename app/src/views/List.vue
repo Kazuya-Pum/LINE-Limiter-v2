@@ -22,11 +22,11 @@
       ></v-text-field>
     </v-toolbar>
     <v-tabs icons-and-text grow show-arrows center-active v-model="tab">
-      <v-tab>すべて</v-tab>
-      <v-tab>生鮮</v-tab>
-      <v-tab>調味料</v-tab>
-      <v-tab>保存食</v-tab>
-      <v-tab>その他</v-tab>
+      <v-tab>すべて<v-icon large>$vuetify.icons.all</v-icon></v-tab>
+      <v-tab>生鮮<v-icon large>mdi-food-apple</v-icon></v-tab>
+      <v-tab>調味料<v-icon large>mdi-shaker</v-icon></v-tab>
+      <v-tab>保存食<v-icon large>$vuetify.icons.preserved</v-icon></v-tab>
+      <v-tab>その他<v-icon large>$vuetify.icons.other</v-icon></v-tab>
     </v-tabs>
     <v-card flat class="overflow-y-auto pa-0 text-center">
       <v-tabs-items v-model="tab">
