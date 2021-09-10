@@ -69,6 +69,10 @@ export default Vue.extend({
       liff.login();
     }
 
+    if (!(await liff.getFriendship()).friendFlag) {
+      liff.openWindow({ url: "https://lin.ee/S3O0CMX" });
+    }
+
     const context = liff.getContext();
     const storageID = context ? getStorageID(context) : null;
 
