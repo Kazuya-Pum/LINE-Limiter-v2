@@ -56,8 +56,8 @@ export const login = functions.https.onCall(async (data) => {
         .doc(profile.userId)
         .set({visible: true});
     return {token};
-  } catch (e) {
-    console.error(JSON.stringify(e, null, "  "));
-    return {error: e.message};
+  } catch (err) {
+    console.error(JSON.stringify(err, null, "  "));
+    return {error: err instanceof Error ? err.message : err};
   }
 });
