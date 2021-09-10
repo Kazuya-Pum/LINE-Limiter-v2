@@ -1,5 +1,4 @@
 import * as admin from "firebase-admin";
-admin.initializeApp();
 
 const deleteQueryBatch = async (
     db: FirebaseFirestore.Firestore,

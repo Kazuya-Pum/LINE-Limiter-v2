@@ -200,4 +200,4 @@ app.post("/", middleware(middlewareConfig), (req: Request, res: Response) => {
       });
 });
 
-export const webhook = functions.https.onRequest(app);
+export const webhook = functions.region("asia-northeast1").https.onRequest(app);

@@ -82,7 +82,10 @@ export default Vue.extend({
       } else {
         const accessToken = liff.getAccessToken();
         // LINEのIDトークンをfirebase functionsに投げて，firebaseのカスタム認証用トークンを取得
-        const login = firebase.functions().httpsCallable("login");
+        const login = firebase
+          .app()
+          .functions("asia-northeast1")
+          .httpsCallable("login");
         const result = await login({ accessToken });
         if (result.data.error) {
           console.error(result.data.error);

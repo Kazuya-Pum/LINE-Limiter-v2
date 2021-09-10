@@ -2,7 +2,6 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import axios from "axios";
 import "firebase-functions";
-import "./firebase";
 
 const channelId = functions.config().line.id;
 
@@ -41,22 +40,23 @@ const getProfile = async (accessToken: string) => {
   return response.data;
 };
 
-export const login = functions.https.onCall(async (data) => {
-  const {accessToken} = data;
-  try {
-    await verifyToken(accessToken);
-    const profile = await getProfile(accessToken);
-    const token = await admin.auth().createCustomToken(profile.userId);
-    await admin
-        .firestore()
-        .collection("storages")
-        .doc(profile.userId)
-        .collection("users")
-        .doc(profile.userId)
-        .set({visible: true});
-    return {token};
-  } catch (err) {
-    console.error(JSON.stringify(err, null, "  "));
-    return {error: err instanceof Error ? err.message : err};
-  }
-});
+export const login = functions
+    .region("asia-northeast1").https.onCall(async (data) => {
+      const {accessToken} = data;
+      try {
+        await verifyToken(accessToken);
+        const profile = await getProfile(accessToken);
+        const token = await admin.auth().createCustomToken(profile.userId);
+        await admin
+            .firestore()
+            .collection("storages")
+            .doc(profile.userId)
+            .collection("users")
+            .doc(profile.userId)
+            .set({visible: true});
+        return {token};
+      } catch (err) {
+        console.error(JSON.stringify(err, null, "  "));
+        return {error: err instanceof Error ? err.message : err};
+      }
+    });

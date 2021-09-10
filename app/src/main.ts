@@ -23,7 +23,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 if (process.env.NODE_ENV === "development") {
-  firebase.functions().useEmulator("localhost", 5001);
+  firebase.app().functions("asia-northeast1").useEmulator("localhost", 5001);
   firebase.firestore().useEmulator("localhost", 8080);
   firebase.auth().useEmulator("http://localhost:9099");
 }
