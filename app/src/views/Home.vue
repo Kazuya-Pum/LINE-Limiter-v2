@@ -1,16 +1,17 @@
 <template>
-  <hello-world />
+  <v-container
+    fluid
+    style="height: 100%"
+    :style="{ background: $vuetify.theme.themes.light.primary }"
+  >
+    <v-img :src="require('../assets/logo.png')"></v-img>
+  </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import HelloWorld from "../components/HelloWorld.vue";
 
 export default Vue.extend({
-  name: "Home",
-
-  components: {
-    HelloWorld,
-  },
+  data: () => ({}),
 });
 </script>
