@@ -9,4 +9,9 @@ module.exports = {
   devServer: {
     disableHostCheck: true,
   },
+  pwa: {
+    name: "LINE Limiter",
+    background_color: "#65D678",
+    themeColor: "#65D678",
+  },
 };
