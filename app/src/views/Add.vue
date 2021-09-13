@@ -90,8 +90,15 @@
                     <v-divider></v-divider>
                     <v-card-text>
                       <h3>通知日</h3>
-                      <v-chip-group multiple color="primary">
-                        <v-chip filter>1日前</v-chip>
+                      <v-chip-group
+                        multiple
+                        v-model="food.notifications"
+                        color="primary"
+                      >
+                        <v-chip filter value="1">1日前</v-chip>
+                        <v-chip filter value="3">3日前</v-chip>
+                        <v-chip filter value="7">7日前</v-chip>
+                        <v-chip filter value="14">14日前</v-chip>
                       </v-chip-group>
                     </v-card-text>
                   </v-card>
@@ -233,6 +240,11 @@ export default Vue.extend({
     async save() {
       this.loading = true;
       this.food.limit = Date.parse(this.food.date || getNow());
+
+      this.food.notifications = this.food.notifications.map((notify) =>
+        Number(notify)
+      );
+
       if (this.foodID) {
         this.food.enabled = true;
         await this.updateFood({ foodID: this.foodID, food: this.food });

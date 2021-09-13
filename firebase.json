@@ -46,6 +46,9 @@
     },
     "ui": {
       "enabled": true
+    },
+    "pubsub": {
+      "port": 8085
     }
   }
 }

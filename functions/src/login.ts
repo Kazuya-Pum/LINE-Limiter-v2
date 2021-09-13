@@ -56,7 +56,7 @@ export const login = functions
             .set({visible: true});
         return {token};
       } catch (err) {
-        console.error(JSON.stringify(err, null, "  "));
+        console.error(err);
         return {error: err instanceof Error ? err.message : err};
       }
     });
