@@ -26,12 +26,16 @@ const valFood = (food: Food): Food => {
 
 export default new Vuex.Store({
   state: {
-    storageID: "",
+    storageId: "",
+    notice: 12,
     foods: [] as Food[],
   },
   getters: {
-    storageID: (state) => {
-      return state.storageID;
+    storageId: (state) => {
+      return state.storageId;
+    },
+    notice: (state) => {
+      return state.notice;
     },
     foods:
       (state) =>
@@ -42,10 +46,10 @@ export default new Vuex.Store({
             (search === "" || food.name.startsWith(search))
         );
       },
-    foodByID:
+    foodById:
       (state) =>
-      (foodID: string): Food | undefined => {
-        const res = state.foods.filter((food) => food.id === foodID);
+      (foodId: string): Food | undefined => {
+        const res = state.foods.filter((food) => food.id === foodId);
         return res.length > 0 ? res[0] : undefined;
       },
     foodsByCategory:
@@ -71,60 +75,97 @@ export default new Vuex.Store({
   },
   mutations: {
     ...vuexfireMutations,
-    setStorageID(state, storageID) {
-      state.storageID = storageID;
+    setStorageId(state, storageId) {
+      state.storageId = storageId;
+    },
+    setNotice(state, notice) {
+      state.notice = notice;
     },
   },
   actions: {
-    bindFoods: firestoreAction(({ bindFirestoreRef, getters }) => {
-      // return the promise returned by `bindFirestoreRef`
-      return bindFirestoreRef(
-        "foods",
-        firebase
+    bindFoods: firestoreAction(
+      async ({ bindFirestoreRef, getters, commit }) => {
+        // return the promise returned by `bindFirestoreRef`
+        const info = await firebase
           .firestore()
           .collection("storages")
-          .doc(getters.storageID)
-          .collection("foods")
-          .orderBy("limit")
-      );
+          .doc(getters.storageId)
+          .get();
+
+        const notice = info.get("notice");
+        if (
+          typeof notice === "number" &&
+          Number.isInteger(notice) &&
+          notice >= 0 &&
+          notice <= 23
+        ) {
+          commit("setNotice", notice);
+        } else {
+          await firebase
+            .firestore()
+            .collection("storages")
+            .doc(getters.storageId)
+            .update({ notice: getters.notice });
+        }
+
+        return bindFirestoreRef(
+          "foods",
+          firebase
+            .firestore()
+            .collection("storages")
+            .doc(getters.storageId)
+            .collection("foods")
+            .orderBy("limit")
+        );
+      }
+    ),
+    setNotice: firestoreAction(({ getters, commit }, notice: number) => {
+      if (Number.isInteger(notice) && notice >= 0 && notice <= 23) {
+        commit("setNotice", notice);
+        return firebase
+          .firestore()
+          .collection("storages")
+          .doc(getters.storageId)
+          .update({ notice });
+      }
     }),
     addFood: firestoreAction(({ getters }, food: Food) => {
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.storageID)
+        .doc(getters.storageId)
         .collection("foods")
         .add(valFood(food));
     }),
-    updateFood: firestoreAction(({ getters }, { foodID, food }) => {
+    updateFood: firestoreAction(({ getters }, { foodId, food }) => {
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.storageID)
+        .doc(getters.storageId)
         .collection("foods")
-        .doc(foodID)
+        .doc(foodId)
         .update(valFood(food));
     }),
-    toggleFood: firestoreAction(async ({ getters }, foodID) => {
-      const food = getters.foodByID(foodID);
+    toggleFood: firestoreAction(async ({ getters }, foodId) => {
+      const food = getters.foodById(foodId);
 
       food.enabled = !food.enabled;
 
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.storageID)
+        .doc(getters.storageId)
         .collection("foods")
-        .doc(foodID)
+        .doc(foodId)
         .update(food);
     }),
-    deleteFood: firestoreAction(({ getters }, foodID) => {
+    deleteFood: firestoreAction(({ getters }, foodId) => {
       return firebase
         .firestore()
         .collection("storages")
-        .doc(getters.storageID)
+        .doc(getters.storageId)
         .collection("foods")
-        .doc(foodID)
+        .doc(foodId)
         .delete();
     }),
   },

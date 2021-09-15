@@ -212,7 +212,7 @@ const init: Food = {
 
 export default Vue.extend({
   props: {
-    foodID: {
+    foodId: {
       type: String,
       required: false,
     },
@@ -226,7 +226,7 @@ export default Vue.extend({
     show: false,
     loading: false,
     food: { ...init },
-    tmpID: "",
+    tmpId: "",
   }),
   methods: {
     ...mapActions(["addFood", "updateFood"]),
@@ -245,9 +245,9 @@ export default Vue.extend({
         Number(notify)
       );
 
-      if (this.foodID) {
+      if (this.foodId) {
         this.food.enabled = true;
-        await this.updateFood({ foodID: this.foodID, food: this.food });
+        await this.updateFood({ foodId: this.foodId, food: this.food });
       } else {
         await this.addFood(this.food);
       }
@@ -268,8 +268,8 @@ export default Vue.extend({
       return URL.createObjectURL(this.preview);
     },
     foodOrigin(): Food {
-      if (this.tmpID) {
-        const food: Food = { ...this.$store.getters.foodByID(this.foodID) };
+      if (this.tmpId) {
+        const food: Food = { ...this.$store.getters.foodById(this.foodId) };
         if (!food || Object.keys(food).length == 0) {
           return { ...init };
         }
@@ -284,7 +284,7 @@ export default Vue.extend({
   },
   mounted() {
     // 初回読み込み時にcomputedを発火させる用
-    this.tmpID = this.foodID;
+    this.tmpId = this.foodId;
   },
 });
 </script>

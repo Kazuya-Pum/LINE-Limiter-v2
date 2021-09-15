@@ -13,5 +13,13 @@ import Vue from "vue";
 
 export default Vue.extend({
   data: () => ({}),
+  methods: {
+    async push() {
+      await this.$router.push({ name: "Add" });
+    },
+  },
+  mounted() {
+    setTimeout(this.push, 500);
+  },
 });
 </script>

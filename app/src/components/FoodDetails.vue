@@ -122,7 +122,7 @@ import Food from "@/types/food";
 
 export default Vue.extend({
   props: {
-    foodID: {
+    foodId: {
       type: String,
       required: true,
     },
@@ -145,16 +145,16 @@ export default Vue.extend({
       this.$emit("close");
     },
     edit() {
-      this.$router.push({ name: "Edit", params: { foodID: this.foodID } });
+      this.$router.push({ name: "Edit", params: { foodId: this.foodId } });
     },
     async toggle() {
       this.loading = true;
-      await this.toggleFood(this.foodID);
+      await this.toggleFood(this.foodId);
       this.close();
     },
     async execDelete() {
       this.loading = true;
-      await this.deleteFood(this.foodID);
+      await this.deleteFood(this.foodId);
       this.close();
     },
     async scroll() {
@@ -166,7 +166,7 @@ export default Vue.extend({
   },
   computed: {
     food(): Food | { [key: string]: never } {
-      const food = this.$store.getters.foodByID(this.foodID);
+      const food = this.$store.getters.foodById(this.foodId);
       if (food) {
         food.date = new Date(food.limit).toISOString().substr(0, 10);
         return food;
@@ -176,7 +176,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    async foodID() {
+    async foodId() {
       await this.scroll();
     },
   },

@@ -39,7 +39,7 @@ import "firebase/functions";
 import liff from "@line/liff";
 import { Context } from "@line/liff/dist/lib/store";
 
-const getStorageID = (context: Context) => {
+const getStorageId = (context: Context) => {
   const type = context.type;
   switch (type) {
     case "group":
@@ -74,7 +74,7 @@ export default Vue.extend({
     }
 
     const context = liff.getContext();
-    const storageID = context ? getStorageID(context) : null;
+    const storageId = context ? getStorageId(context) : null;
 
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
@@ -98,8 +98,8 @@ export default Vue.extend({
         }
       }
 
-      if (this.user && storageID) {
-        this.$store.commit("setStorageID", storageID);
+      if (this.user && storageId) {
+        this.$store.commit("setStorageId", storageId);
         this.bindFoods();
       }
     });

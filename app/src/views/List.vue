@@ -8,7 +8,7 @@
       transition="dialog-bottom-transition"
     >
       <food-details
-        :foodID="foodID"
+        :foodId="foodId"
         :enabled="enabled"
         @close="dialog = false"
       />
@@ -93,13 +93,13 @@ export default Vue.extend({
   data: () => ({
     tab: 0,
     dialog: false,
-    foodID: "",
+    foodId: "",
     search: "",
   }),
   methods: {
     onClick(id: string) {
       this.dialog = true;
-      this.foodID = id;
+      this.foodId = id;
     },
   },
 });
