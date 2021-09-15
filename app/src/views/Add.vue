@@ -104,10 +104,10 @@
                         v-model="food.notifications"
                         color="primary"
                       >
-                        <v-chip filter value="1">1日前</v-chip>
-                        <v-chip filter value="3">3日前</v-chip>
-                        <v-chip filter value="7">7日前</v-chip>
-                        <v-chip filter value="14">14日前</v-chip>
+                        <v-chip filter :value="1">1日前</v-chip>
+                        <v-chip filter :value="3">3日前</v-chip>
+                        <v-chip filter :value="7">7日前</v-chip>
+                        <v-chip filter :value="14">14日前</v-chip>
                       </v-chip-group>
                     </v-card-text>
                   </v-card>
