@@ -22,7 +22,7 @@
               background-repeat: no-repeat;
               background-size: 30%;
             "
-            :style="{ backgroundImage: backgroundImage }"
+            :style="{ backgroundImage }"
           >
             <v-file-input
               name="file"
@@ -31,7 +31,16 @@
               class="d-none"
               v-model="preview"
             />
-            <v-img v-if="url" :src="url" height="100%" />
+            <v-img v-if="url" :src="url" height="100%">
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
           </label>
         </v-card>
         <div class="flex-grow-1 flex-shrink-0">
@@ -191,6 +200,8 @@
 import Vue from "vue";
 import { mapActions } from "vuex";
 import Food from "@/types/food";
+import firebase from "firebase/app";
+import "firebase/storage";
 
 const getNow = () => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -218,7 +229,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    preview: null,
+    preview: null as null | Blob | Uint8Array | ArrayBuffer,
     backgroundImage: "url(" + require("../assets/img.png") + ")",
     imgHeight: "100vmin",
     tab: null,
@@ -227,6 +238,7 @@ export default Vue.extend({
     loading: false,
     food: { ...init },
     tmpId: "",
+    url: "",
   }),
   methods: {
     ...mapActions(["addFood", "updateFood"]),
@@ -249,24 +261,53 @@ export default Vue.extend({
         this.food.enabled = true;
         await this.updateFood({ foodId: this.foodId, food: this.food });
       } else {
-        await this.addFood(this.food);
+        const added = await this.addFood(this.food);
+        this.food.id = added.id;
       }
+
+      if (this.preview) {
+        const imageUrl = await this.uploadImage(this.preview);
+
+        this.food.img = imageUrl;
+        await this.updateFood({ foodId: this.food.id, food: this.food });
+      }
+
       this.loading = false;
       this.$router.push({ name: "List" });
+    },
+    getImagePath() {
+      const storageId = this.$store.getters.storageId;
+      const imagePath = `${storageId}/${this.food.id}`;
+
+      return imagePath;
+    },
+    async uploadImage(file: Blob | Uint8Array | ArrayBuffer) {
+      const imagePath = this.getImagePath();
+      await firebase
+        .storage()
+        .ref()
+        .child(imagePath)
+        .put(file, { contentType: "image/*" });
+
+      return firebase.storage().ref().child(imagePath).getDownloadURL();
     },
   },
   watch: {
     foodOrigin(food) {
       this.food = { ...food };
+
+      this.food.id = this.foodId;
+
+      this.url = this.food.img || this.url;
+    },
+    preview(value) {
+      if (value == null) {
+        return "";
+      }
+      this.url = URL.createObjectURL(value);
     },
   },
   computed: {
-    url(): string {
-      if (this.preview == null) {
-        return "";
-      }
-      return URL.createObjectURL(this.preview);
-    },
     foodOrigin(): Food {
       if (this.tmpId) {
         const food: Food = { ...this.$store.getters.foodById(this.foodId) };

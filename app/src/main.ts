@@ -8,6 +8,7 @@ import firebase from "firebase/app";
 import "firebase/functions";
 import "firebase/firestore";
 import "firebase/auth";
+import "firebase/storage";
 
 Vue.config.productionTip = false;
 
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === "development") {
   firebase.app().functions("asia-northeast1").useEmulator("localhost", 5001);
   firebase.firestore().useEmulator("localhost", 8080);
   firebase.auth().useEmulator("http://localhost:9099");
+  firebase.storage().useEmulator("localhost", 9199);
 }
 
 new Vue({
