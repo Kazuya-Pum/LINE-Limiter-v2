@@ -1,5 +1,8 @@
 <template>
   <v-app>
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <error :message="errmsg" @close="errorClose()"></error>
+    </v-dialog>
     <v-main>
       <router-view />
     </v-main>
@@ -38,6 +41,7 @@ import "firebase/auth";
 import "firebase/functions";
 import liff from "@line/liff";
 import { Context } from "@line/liff/dist/lib/store";
+import Error from "./components/Error.vue";
 
 const getStorageId = (context: Context) => {
   const type = context.type;
@@ -54,12 +58,22 @@ const getStorageId = (context: Context) => {
 export default Vue.extend({
   name: "App",
 
-  data: (): { userName: string; user: firebase.User | null } => ({
-    userName: "",
+  components: { Error },
+  data: (): {
+    user: firebase.User | null;
+    dialog: boolean;
+    errmsg: string;
+  } => ({
     user: null,
+    dialog: false,
+    errmsg: "エラーが発生しました",
   }),
   methods: {
     ...mapActions(["bindFoods", "init"]),
+    errorClose() {
+      this.dialog = false;
+      liff.closeWindow();
+    },
   },
   async created() {
     await liff.init({ liffId: process.env.VUE_APP_LIFF_ID }).catch((err) => {
@@ -69,11 +83,19 @@ export default Vue.extend({
       liff.login();
     }
 
-    if (!(await liff.getFriendship()).friendFlag) {
-      liff.openWindow({ url: "https://lin.ee/S3O0CMX" });
+    const context = liff.getContext();
+
+    if (
+      context &&
+      context.type !== "group" &&
+      context.type !== "room" &&
+      !(await liff.getFriendship()).friendFlag
+    ) {
+      this.errmsg = "個人での使用にはBotを友達登録する必要があります";
+      this.dialog = true;
+      return;
     }
 
-    const context = liff.getContext();
     const storageId = context ? getStorageId(context) : null;
 
     firebase.auth().onAuthStateChanged(async (user) => {
@@ -100,7 +122,11 @@ export default Vue.extend({
 
       if (this.user && storageId) {
         this.$store.commit("setStorageId", storageId);
-        this.bindFoods();
+        await this.bindFoods().catch((err) => {
+          console.error(err);
+          this.errmsg = "データを読み込めません";
+          this.dialog = true;
+        });
       }
     });
   },
