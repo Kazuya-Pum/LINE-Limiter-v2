@@ -124,7 +124,8 @@ export default Vue.extend({
         this.$store.commit("setStorageId", storageId);
         await this.bindFoods().catch((err) => {
           console.error(err);
-          this.errmsg = "データを読み込めません";
+          this.errmsg =
+            "データを読み込めません\nグループで利用している場合はグループにBotが参加していない，または利用開始を押していない可能性があります";
           this.dialog = true;
         });
       }
