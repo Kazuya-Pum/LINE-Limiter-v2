@@ -20,6 +20,26 @@
     ],
     "rewrites": [
       {
+        "source": "/img/menu/240",
+        "destination": "/img/menu/240.png"
+      },
+      {
+        "source": "/img/menu/300",
+        "destination": "/img/menu/300.png"
+      },
+      {
+        "source": "/img/menu/460",
+        "destination": "/img/menu/460.png"
+      },
+      {
+        "source": "/img/menu/700",
+        "destination": "/img/menu/700.png"
+      },
+      {
+        "source": "/img/menu/1040",
+        "destination": "/img/menu/1040.png"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

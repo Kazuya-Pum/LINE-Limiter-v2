@@ -19,7 +19,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    setTimeout(this.push, 500);
+    setTimeout(this.push, 1000);
   },
 });
 </script>
