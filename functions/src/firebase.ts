@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 
 const deleteQueryBatch = async (
     db: FirebaseFirestore.Firestore,
@@ -41,3 +42,25 @@ export const deleteCollection = async (
     deleteQueryBatch(db, query, resolve).catch(reject);
   });
 };
+
+export const deleteFile = functions
+    .region("asia-northeast1")
+    .firestore
+    .document("storages/{storageId}/foods/{foodId}")
+    .onDelete((snap, context) => {
+      const {storageId, foodId} = context.params;
+
+      return admin.storage().bucket().file(`${storageId}/${foodId}`).delete();
+    });
+
+export const deleteFiles = functions
+    .region("asia-northeast1")
+    .firestore
+    .document("storages/{storageId}")
+    .onDelete((snap, context) => {
+      const {storageId} = context.params;
+
+      return admin.storage().bucket().deleteFiles({
+        prefix: storageId,
+      });
+    });

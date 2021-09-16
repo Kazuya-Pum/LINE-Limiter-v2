@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@line/liff": "^2.13.0",
+    "browser-image-compression": "^1.0.15",
     "core-js": "^3.17.2",
     "firebase": "^8.10.0",
     "register-service-worker": "^1.7.2",

@@ -202,11 +202,27 @@ import { mapActions } from "vuex";
 import Food from "@/types/food";
 import firebase from "firebase/app";
 import "firebase/storage";
+import imageCompression from "browser-image-compression";
 
 const getNow = () => {
   return new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
     .toISOString()
     .substr(0, 10);
+};
+
+// アップロードされた画像ファイルを取得
+const getCompressImageFileAsync = async (file: File) => {
+  const options = {
+    maxSizeMB: 1, // 最大ファイルサイズ
+    maxWidthOrHeight: 800, // 最大画像幅もしくは高さ
+  };
+  try {
+    // 圧縮画像の生成
+    return await imageCompression(file, options);
+  } catch (error) {
+    console.error("getCompressImageFileAsync is error", error);
+    throw error;
+  }
 };
 
 const init: Food = {
@@ -229,7 +245,7 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    preview: null as null | Blob | Uint8Array | ArrayBuffer,
+    preview: null as null | File,
     backgroundImage: "url(" + require("../assets/img.png") + ")",
     imgHeight: "100vmin",
     tab: null,
@@ -281,13 +297,15 @@ export default Vue.extend({
 
       return imagePath;
     },
-    async uploadImage(file: Blob | Uint8Array | ArrayBuffer) {
+    async uploadImage(file: File) {
       const imagePath = this.getImagePath();
+      const pfile = await getCompressImageFileAsync(file);
+
       await firebase
         .storage()
         .ref()
         .child(imagePath)
-        .put(file, { contentType: "image/*" });
+        .put(pfile, { contentType: "image/*" });
 
       return firebase.storage().ref().child(imagePath).getDownloadURL();
     },
