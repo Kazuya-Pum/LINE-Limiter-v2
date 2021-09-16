@@ -47,6 +47,21 @@ export const login = functions
         await verifyToken(accessToken);
         const profile = await getProfile(accessToken);
         const token = await admin.auth().createCustomToken(profile.userId);
+
+        const storage = await admin
+            .firestore()
+            .collection("storages")
+            .doc(profile.userId)
+            .get();
+
+        if (!storage.exists) {
+          await admin
+              .firestore()
+              .collection("storages")
+              .doc(profile.userId)
+              .set({notice: 12});
+        }
+
         await admin
             .firestore()
             .collection("storages")

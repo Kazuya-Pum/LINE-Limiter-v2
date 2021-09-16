@@ -50,7 +50,21 @@ const handleText = async (
   return await client.replyMessage(replyToken, response);
 };
 
-const register = async (storageId:string, userId: string) => {
+const register = async (storageId: string, userId: string) => {
+  const storage = await admin
+      .firestore()
+      .collection("storages")
+      .doc(storageId)
+      .get();
+
+  if (!storage.exists) {
+    await admin
+        .firestore()
+        .collection("storages")
+        .doc(storageId)
+        .set({notice: 12});
+  }
+
   await admin
       .firestore()
       .collection("storages")
