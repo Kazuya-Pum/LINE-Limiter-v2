@@ -131,6 +131,13 @@ export default Vue.extend({
       }
     });
   },
+  watch: {
+    $route(value) {
+      if (value.meta && value.meta.title) {
+        document.title = `${value.meta.title} - LINE Limiter`;
+      }
+    },
+  },
 });
 </script>
 
