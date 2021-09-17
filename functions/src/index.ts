@@ -3,7 +3,7 @@ import * as Webhook from "./webhook";
 import * as Notify from "./notify";
 import * as Firebase from "./firebase";
 import * as admin from "firebase-admin";
-admin.initializeApp({storageBucket: "kazuya-pum.appspot.com"});
+admin.initializeApp({storageBucket: "line-limiter"});
 
 export const login = Login.login;
 export const webhook = Webhook.webhook;
